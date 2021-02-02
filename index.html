@@ -1,1 +1,263 @@
-hello
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ReportBuilder</title>
+    <link rel="stylesheet" href="./lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="./css/site.css" />
+    <script src="/sortable/Sortable.js"></script>
+    <script src="/jquery/dist/jquery.min.js"></script>
+    <script src="/clayfy/clayfy.js"></script>
+    <link href="/clayfy/clayfy.css" rel="stylesheet" />
+    <link href="/font-awesome/css/fontawesome.min.css" rel="stylesheet" />
+    <link href="/font-awesome/css/all.css" rel="stylesheet" />
+    <style>
+        .fa-rotate-45 {
+            -webkit-transform: rotate(45deg);
+            transform: rotate(45deg);
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+            <div class="container">
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">ReportBuilder</a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
+                    <ul class="navbar-nav flex-grow-1">
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+    <div class="container">
+        <main role="main" class="pb-3">
+
+            <style>
+                #tools .list-group-item {
+                    cursor: all-scroll;
+                }
+
+                .grid-square {
+                    /*height: 100px;*/
+                    display: inline-block;
+                    background-color: #fff;
+                    border: solid 1px rgb(0,0,0,0.2);
+                    padding: 10px;
+                    transition: all ease 0.5s;
+                }
+
+                .blue-background-class {
+                    background: #808080;
+                }
+
+                .var {
+                    position: relative;
+                    overflow: hidden;
+                    height: 60px;
+                }
+
+                    .var > div {
+                        position: absolute;
+                        top: 5px;
+                        left: 5px;
+                        width: auto;
+                    }
+
+                .controls {
+                    position: absolute;
+                    top: 5px;
+                    right: 5px;
+                    cursor: pointer;
+                }
+            </style>
+
+            <div class="row">
+                <div class="col-4">
+                    <div id="tools" class="list-group col mb-3">
+                        <div class="list-group-item col-12" data-type="label-1">Label 1</div>
+                        <div class="list-group-item col-12" data-type="label-2">Label 2</div>
+                        <div class="list-group-item col-12" data-type="label-3">Label 3</div>
+                    </div>
+
+                    <div id="vars" class="list-group col">
+                        <div class="list-group-item col-12" data-type="label-1">Var 1</div>
+                        <div class="list-group-item col-12" data-type="label-2">Var 2</div>
+                        <div class="list-group-item col-12" data-type="label-3">Var 3</div>
+                    </div>
+                </div>
+                <div class="col-8">
+
+                    @*<div id="form" class="row border" style="">
+                        <div id="text-help" class="w-100 text-center text-muted p-5">Arrastra un elemento hasta aquí</div>
+                    </div>*@
+                    <div id="form" class="row border" style="">
+                        <div class="list-group-item grid-square p-3 col-6" data-type="label-1" draggable="false" style="">
+                            <div contenteditable="true">label</div><div class="var p-2 border w-100"><div class="list-group-item col-12" data-type="label-3" draggable="false" style="">Var 3</div></div><div class="controls"><i class="stretch p-2 border rounded-circle mr-2 fa fa-compress-alt fa-rotate-45"></i><i class="expand p-2 border rounded-circle mr-2 fa fa-expand-alt fa-rotate-45"></i><i class="handle p-2 border rounded-circle mr-2 fa fa-arrows-alt"></i></div>
+                        </div><div class="list-group-item grid-square p-3 col-9" data-type="label-1" style="" draggable="false"><div contenteditable="true">label</div><div class="var p-2 border w-100"><div class="list-group-item col-12" data-type="label-3" style="" draggable="false">Var 3</div></div><div class="controls"><i class="stretch p-2 border rounded-circle mr-2 fa fa-compress-alt fa-rotate-45"></i><i class="expand p-2 border rounded-circle mr-2 fa fa-expand-alt fa-rotate-45"></i><i class="handle p-2 border rounded-circle mr-2 fa fa-arrows-alt"></i></div></div><div class="list-group-item grid-square p-3 col-6" data-type="label-1" draggable="false" style=""><div contenteditable="true">label</div><div class="var p-2 border w-100"><div class="list-group-item col-12" data-type="label-2" draggable="false" style="">Var 2</div></div><div class="controls"><i class="stretch p-2 border rounded-circle mr-2 fa fa-compress-alt fa-rotate-45"></i><i class="expand p-2 border rounded-circle mr-2 fa fa-expand-alt fa-rotate-45"></i><i class="handle p-2 border rounded-circle mr-2 fa fa-arrows-alt"></i></div></div><div class="list-group-item col-12 grid-square p-3" data-type="label-2" style="" draggable="false"><div>label 2</div><div class="var p-2 border w-100"></div><div class="controls"><i class="stretch p-2 border rounded-circle mr-2 fa fa-compress-alt fa-rotate-45"></i><i class="expand p-2 border rounded-circle mr-2 fa fa-expand-alt fa-rotate-45"></i><i class="handle p-2 border rounded-circle mr-2 fa fa-arrows-alt"></i></div></div><div id="text-help" class="w-100 text-center text-muted p-5" style="display: none;">Arrastra un elemento hasta aquí</div>
+                    </div>
+                </div>
+            </div>
+
+            <script>
+
+                var data = ['OK', 55, 0.5, 72, 38];
+
+
+                $(() => {
+
+                    new Sortable($("#tools")[0], {
+                        forceFallback: true,
+                        fallbackOnBody: true,
+                        group: {
+                            name: 'items',
+                            pull: 'clone',
+                            put: false // Do not allow items to be put into this list
+                        },
+                        animation: 150,
+                        dragClass: 'bg-light',
+                        easing: "cubic-bezier(1, 0, 0, 1)",
+                        sort: false, // To disable sorting: set sort to false
+                        onUnchoose: (e) => {
+                            //console.log(e);
+                            //$(e.item).removeClass('col-6');
+                        },
+                        onClone: function (/**Event*/evt) {
+                            // console.log(evt);
+                        }, dragoverBubble: true
+                    });
+
+                    new Sortable($("#vars")[0], {
+                        forceFallback: true,
+                        fallbackOnBody: true,
+                        group: {
+                            name: 'vars',
+                            pull: 'clone',
+                            put: false // Do not allow items to be put into this list
+                        },
+                        animation: 150,
+                        dragClass: 'bg-light',
+                        sort: false, // To disable sorting: set sort to false
+                        onUnchoose: (e) => {
+                            //console.log(e);
+                            //$(e.item).removeClass('col-6');
+                        },
+                        onEnd: function (/**Event*/evt) {
+                            console.log(evt);
+                            //var text = $(evt.item).text();
+                            var to = $(evt.to);
+                            if (to.hasClass('var')) {
+                                to.empty();
+                                to.html(evt.item);
+                            }
+                        },
+                        dragoverBubble: true
+                    });
+
+                    new Sortable($("#form")[0], {
+                        animation: 150,
+                        group: {
+                            name: 'form',
+                            put: ['items']
+                        },
+                        handle: '.handle',
+                        //filter:'.grid-square',
+                        ghostClass: 'bg-primary',
+                        onEnd: function (/**Event*/evt) {
+                        },
+                        onAdd: function (/**Event*/evt) {
+                            //console.log(evt);
+                            $(evt.item).addClass('grid-square p-3');
+                            $("#text-help").hide();
+                            var el = $(evt.item);
+                            var type = el.data('type');
+                            switch (type) {
+                                case 'label-1':
+                                    el.html("");
+                                    $('<div>').prop('contentEditable', true).text('label').appendTo(el);
+
+                                    break;
+                                case 'label-2':
+                                    el.html("");
+                                    $('<div>').text('label 2').appendTo(el);
+
+                                    break;
+                                case 'label-3':
+                                    el.html("");
+                                    $('<div>').text('label 3').appendTo(el);
+
+                                    break;
+                                default:
+                                    el.html("hello world");
+                            }
+
+                            $('<div class="var p-2 border w-100"></div>').appendTo(el);
+
+                            var controls = $('<div>', { class: 'controls' }).appendTo(el);
+                            $('<i class="stretch p-2 border rounded-circle mr-2 fa fa-compress-alt fa-rotate-45"></i>')
+                                .on('click', () => {
+                                    if (el.hasClass('col-6')) el.removeClass('col-6').addClass('col-3');
+                                    if (el.hasClass('col-9')) el.removeClass('col-9').addClass('col-6');
+                                    if (el.hasClass('col-12')) el.removeClass('col-12').addClass('col-9');
+
+                                })
+                                .appendTo(controls);
+                            $('<i class="expand p-2 border rounded-circle mr-2 fa fa-expand-alt fa-rotate-45"></i>')
+                                .on('click', () => {
+                                    if (el.hasClass('col-9')) el.removeClass('col-9').addClass('col-12');
+                                    if (el.hasClass('col-6')) el.removeClass('col-6').addClass('col-9');
+                                    if (el.hasClass('col-3')) el.removeClass('col-3').addClass('col-6');
+
+                                })
+                                .appendTo(controls);
+                            $('<i class="handle p-2 border rounded-circle fa fa-arrows-alt"></i>').appendTo(controls);
+
+                            new Sortable(el.find('.var')[0], {
+                                animation: 150,
+                                group: {
+                                    name: 'vars', pull: false
+                                }
+                            });
+                            el.find('.handle-').clayfy({
+                                type: 'resizable',
+                                //    //container: '#container-6',
+                                minSize: [100, 50],
+                                maxSize: [2000, 1200],
+                                //    className: 'custom-handlers',
+                                //    callbacks: {
+                                //        //resize: function () {
+                                //        //    $demo6.html('inner: ' + $demo6.width() + ' x ' + $demo6.height() + 'outer: ' + $demo6.outerWidth() + ' x '+ $demo6.outerHeight());
+                                //        //}
+                                //    }
+                            });
+                            // same properties as onEnd
+                        },
+                        onMove: function (/**Event*/evt, /**Event*/originalEvent) {
+                            //console.log(evt);
+                        }
+                    });
+                });
+            </script>
+        </main>
+    </div>
+
+    <footer class="border-top footer text-muted">
+        <div class="container">
+            &copy; 2021 - ReportBuilder - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+        </div>
+    </footer>
+    <script src="/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+</body>
+</html>
