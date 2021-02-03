@@ -25,7 +25,8 @@
         #tools .list-group-item {
             cursor: all-scroll;
         }
-        #form{
+
+        #form {
             padding: 10px;
         }
 
@@ -92,6 +93,10 @@
         }
 
         .preview .var-ct > .var {
+            font-weight: normal;
+            background: none;
+            font-size: 100%;
+            color: initial;
         }
     </style>
 </head>
@@ -141,11 +146,20 @@
                     <div class="h4">
                         Variables
                     </div>
-                    <div id="vars" class="col">
-                        <div class="badge badge-light var" data-type="label-1">Var 1</div>
-                        <div class="badge badge-light var" data-type="label-1">Var 2</div>
-                        <div class="badge badge-light var" data-type="label-1">Var 3</div>
-                        <div class="badge badge-light var" data-type="label-1">Var 4</div>
+                    <div id="vars" class="col mb-3">
+                        <div class="badge badge-light var" data-var="hora">Hora</div>
+                        <div class="badge badge-light var" data-var="fecha">Fecha</div>
+                        <div class="no-drag w-100 p-2"></div>
+                        <div class="badge badge-light var" data-var="1">Var 1</div>
+                        <div class="badge badge-light var" data-var="2">Var 2</div>
+                        <div class="badge badge-light var" data-var="3">Var 3</div>
+                        <div class="badge badge-light var" data-var="4">Var 4</div>
+                    </div>
+                    <div class="h4">
+                        Datos
+                    </div>
+                    <div class="col">
+                        <textarea id="data" class="form-control">'OK', 55, 0.5, 72, 38</textarea>
                     </div>
                 </div>
                 <div class="col-8">
@@ -164,6 +178,32 @@
 
                 ReportBuilder = {
                     preview: false,
+                    updater: null,
+                    update: function () {
+                        var data = $("#data").val().split(',');
+
+                        $("#form .grid-square").each((i, e) => {
+                            var v = $(e).data('var');
+                            if (v) {
+                                if (!ReportBuilder.preview) {
+                                    $(e).find('.var').text("Var " + v);
+                                } else {
+                                    switch (v) {
+                                        case 'hora':
+                                            $(e).find('.var').text(new Date().toLocaleTimeString());
+                                            break;
+                                        case 'fecha':
+                                            $(e).find('.var').text(new Date().toLocaleDateString());
+                                            break;
+                                        default:
+                                            var value = data[v - 1];
+                                            $(e).find('.var').text(value);
+
+                                    }
+                                }
+                            }
+                        });
+                    },
                     togglePreview: function () {
                         if (this.preview)
                             $('#form').removeClass("preview");
@@ -198,9 +238,10 @@
                             this.setVar(el, v);
                     },
                     setVar: function (el, v) {
+                        el.data('var', v);
                         el.find('.var-ct').html(`<div class="var col-12 badge badge-dark" data-type="label-2" style="" draggable="false">Var ${v}</div>`);
                     },
-                    setupControls: function (el, type, text="Label") {
+                    setupControls: function (el, type, text = "Label") {
 
                         el.addClass('grid-square');
                         el.html("");
@@ -267,6 +308,7 @@
                         new Sortable($("#vars")[0], {
                             forceFallback: true,
                             fallbackOnBody: true,
+                            filter: '.no-drag',
                             group: {
                                 name: 'vars',
                                 pull: 'clone',
@@ -280,7 +322,8 @@
                                 if (to.hasClass('var-ct')) {
                                     to.empty();
                                     to.html(evt.item);
-                                    $(evt.item).removeClass("list-group-item").addClass('badge badge-dark')
+                                    $(evt.item).removeClass("list-group-item").addClass('badge badge-dark');
+                                    $(to).parent().data('var', $(evt.item).data('var'));
                                 }
                             },
                             dragoverBubble: true
@@ -294,20 +337,17 @@
                             },
                             handle: '.handle',
                             ghostClass: 'bg-primary',
-                            onEnd: function (/**Event*/evt) {
-                            },
                             onAdd: function (/**Event*/evt) {
                                 $("#text-help").hide();
-                                //console.log(evt);
                                 var el = $(evt.item);
                                 var type = el.data('type');
-
                                 builder.setupControls(el, type);
-                            },
-                            onMove: function (/**Event*/evt, /**Event*/originalEvent) {
-                                //console.log(evt);
                             }
                         });
+
+                        this.updater = setInterval((() => {
+                            this.update();
+                        }).bind(this), 500);
                     }
                 }
 
