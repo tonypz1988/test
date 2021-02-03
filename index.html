@@ -17,6 +17,82 @@
             -webkit-transform: rotate(45deg);
             transform: rotate(45deg);
         }
+
+        .btn {
+            cursor: pointer;
+        }
+
+        #tools .list-group-item {
+            cursor: all-scroll;
+        }
+        #form{
+            padding: 10px;
+        }
+
+        .grid-square {
+            display: inline-block;
+            background-color: #fff;
+            border: solid 1px rgb(0,0,0,0.2);
+            padding: 45px 5px 5px;
+            transition: all ease 0.5s;
+        }
+
+        .blue-background-class {
+            background: #808080;
+        }
+
+        .var-ct {
+            position: relative;
+            overflow: hidden;
+            height: 40px;
+        }
+
+            .var-ct > .var {
+                padding: 8px;
+                display: inline-block;
+                width: auto;
+                margin: 3px;
+            }
+
+                .var-ct > .var.list-group-item {
+                    padding: 7px;
+                    font-size: 75%;
+                    background: beige;
+                    font-weight: 700;
+                    border-radius: 0.25rem;
+                    display: inline-block;
+                    line-height: 1;
+                }
+
+        #vars > .var {
+            padding: 7px;
+            font-size: 75%;
+            background: beige;
+            font-weight: 700;
+            border-radius: 0.25rem;
+            display: inline-block;
+            line-height: 1;
+            cursor: pointer;
+        }
+
+        .controls {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            cursor: pointer;
+        }
+
+        .preview .grid-square {
+            border: none;
+            padding: 5px;
+        }
+
+        .preview .controls {
+            display: none;
+        }
+
+        .preview .var-ct > .var {
+        }
     </style>
 </head>
 <body>
@@ -52,77 +128,30 @@
     <div class="container">
         <main role="main" class="pb-3">
 
-            <style>
-                .btn {
-                    cursor: pointer;
-                }
-
-                #tools .list-group-item {
-                    cursor: all-scroll;
-                }
-
-                .grid-square {
-                    /*height: 100px;*/
-                    display: inline-block;
-                    background-color: #fff;
-                    border: solid 1px rgb(0,0,0,0.2);
-                    padding: 10px;
-                    transition: all ease 0.5s;
-                }
-
-                .blue-background-class {
-                    background: #808080;
-                }
-
-                .var-ct {
-                    position: relative;
-                    overflow: hidden;
-                    height: 40px;
-                }
-
-                    .var-ct > .var {
-                        color: red;
-                        padding: 5px;
-                        display: inline-block;
-                        width: auto;
-                        margin: 3px;
-                    }
-
-                .controls {
-                    position: absolute;
-                    top: 5px;
-                    right: 5px;
-                    cursor: pointer;
-                }
-
-                .preview .grid-square {
-                    border: none;
-                }
-
-                .preview .controls {
-                    display: none;
-                }
-
-                .preview .var-ct > .var {
-                    color: blue;
-                }
-            </style>
-
             <div class="row">
                 <div class="col-4">
+                    <div class="h4">
+                        Controles
+                    </div>
                     <div id="tools" class="list-group col mb-3">
                         <div class="list-group-item col-12" data-type="label-1">Label 1</div>
                         <div class="list-group-item col-12" data-type="label-2">Label 2</div>
                         <div class="list-group-item col-12" data-type="label-3">Label 3</div>
                     </div>
-
-                    <div id="vars" class="list-group col">
-                        <div class="list-group-item var col-12" data-type="label-1">Var 1</div>
-                        <div class="list-group-item var col-12" data-type="label-2">Var 2</div>
-                        <div class="list-group-item var col-12" data-type="label-3">Var 3</div>
+                    <div class="h4">
+                        Variables
+                    </div>
+                    <div id="vars" class="col">
+                        <div class="badge badge-light var" data-type="label-1">Var 1</div>
+                        <div class="badge badge-light var" data-type="label-1">Var 2</div>
+                        <div class="badge badge-light var" data-type="label-1">Var 3</div>
+                        <div class="badge badge-light var" data-type="label-1">Var 4</div>
                     </div>
                 </div>
                 <div class="col-8">
+                    <div class="h4">
+                        Reporte
+                    </div>
                     <div id="form" class="row border" style="">
                         <div id="text-help" class="w-100 text-center text-muted p-5">Arrastra un elemento hasta aquí?</div>
                     </div>
@@ -145,11 +174,10 @@
 
                         this.preview = !this.preview;
                     },
-                    addControl: function (text, type, cols = 4) {
+                    addControl: function (text, type, cols = 4, v = null) {
                         $("#text-help").hide();
 
                         var el = $('<div>').appendTo("#form");
-                        el.addClass('list-group-item grid-square p-3');
                         switch (cols) {
                             case 1:
                                 el.addClass('col-3');
@@ -165,16 +193,23 @@
                                 el.addClass('col-12');
                         }
 
+                        this.setupControls(el, type, text);
+                        if (v)
+                            this.setVar(el, v);
+                    },
+                    setVar: function (el, v) {
+                        el.find('.var-ct').html(`<div class="var col-12 badge badge-dark" data-type="label-2" style="" draggable="false">Var ${v}</div>`);
+                    },
+                    setupControls: function (el, type, text="Label") {
+
+                        el.addClass('grid-square');
                         el.html("");
+
                         $('<div>')
                             .addClass('label')
-                            .prop('contentEditable', true)
+                            .prop('contentEditable', !this.preview)
                             .text(text)
                             .appendTo(el);
-
-                        this.setupControls(el, type);
-                    },
-                    setupControls: function (el, type) {
 
                         el.removeClass('list-group-item');
 
@@ -220,19 +255,13 @@
                             group: {
                                 name: 'items',
                                 pull: 'clone',
-                                put: false // Do not allow items to be put into this list
+                                put: false
                             },
                             animation: 150,
                             dragClass: 'bg-light',
                             easing: "cubic-bezier(1, 0, 0, 1)",
-                            sort: false, // To disable sorting: set sort to false
-                            onUnchoose: (e) => {
-                                //console.log(e);
-                                //$(e.item).removeClass('col-6');
-                            },
-                            onClone: function (/**Event*/evt) {
-                                // console.log(evt);
-                            }, dragoverBubble: true
+                            sort: false,
+                            dragoverBubble: true
                         });
 
                         new Sortable($("#vars")[0], {
@@ -241,22 +270,17 @@
                             group: {
                                 name: 'vars',
                                 pull: 'clone',
-                                put: false // Do not allow items to be put into this list
+                                put: false
                             },
                             animation: 150,
                             dragClass: 'bg-light',
-                            sort: false, // To disable sorting: set sort to false
-                            onUnchoose: (e) => {
-                                //console.log(e);
-                                //$(e.item).removeClass('col-6');
-                            },
-                            onEnd: function (/**Event*/evt) {
-                                console.log(evt);
-                                //var text = $(evt.item).text();
+                            sort: false,
+                            onEnd: function (evt) {
                                 var to = $(evt.to);
                                 if (to.hasClass('var-ct')) {
                                     to.empty();
                                     to.html(evt.item);
+                                    $(evt.item).removeClass("list-group-item").addClass('badge badge-dark')
                                 }
                             },
                             dragoverBubble: true
@@ -277,9 +301,6 @@
                                 //console.log(evt);
                                 var el = $(evt.item);
                                 var type = el.data('type');
-                                el.addClass('grid-square p-3');
-                                el.html("");
-                                $('<div>').prop('contentEditable', true).text('label').appendTo(el);
 
                                 builder.setupControls(el, type);
                             },
@@ -290,10 +311,9 @@
                     }
                 }
 
-
                 $(() => {
                     ReportBuilder.setup();
-                    ReportBuilder.addControl("fecha", "1", 2)
+                    ReportBuilder.addControl("fecha", "1", 2, "1")
                     ReportBuilder.addControl("presion", "1", 2)
                     ReportBuilder.addControl("hora", "1")
                 });
